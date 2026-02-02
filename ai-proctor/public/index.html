@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Proctor Test</title>
+  <style>
+    body { 
+      font-family: Arial; 
+      background:#111; 
+      color:#eee; 
+      text-align:center; 
+    }
+    video, canvas {
+      margin-top: 20px;
+      border: 2px solid #0f0;
+      width: 480px;
+      height: 360px;
+    }
+    #status { margin-top: 10px; font-size: 18px; }
+    #log { white-space: pre-wrap; background:#222; margin:20px auto; width:480px; padding:10px; }
+  </style>
+</head>
+<body>
+
+<h1>AI ProCTOR - LIVE TEST</h1>
+<p>Open Console (F12)</p>
+
+<video id="video" autoplay></video>
+<canvas id="overlay" width="480" height="360"></canvas>
+<div id="status">Loading...</div>
+<pre id="log"></pre>
+<button id="downloadBtn">Download Logs</button>
+
+<!-- ✅ Load MediaPipe via normal scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js"></script>
+
+<!-- ✅ Your logic -->
+<script src="./main.js"></script>
+
+</body>
+</html>

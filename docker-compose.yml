@@ -1,0 +1,52 @@
+services:
+  blockchain:
+    build: ./blockchain
+    restart: always
+    container_name: blockproctor-blockchain
+    ports:
+      - "8545:8545"
+    volumes:
+      - ./blockchain:/app
+      - ./blockchain/artifacts:/shared/artifacts
+
+  postgres:
+    image: postgres:15
+    container_name: blockproctor-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: blockproctor
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: blockproctor-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+      - ./blockchain/artifacts:/blockchain/artifacts
+    depends_on:
+      - postgres
+      - blockchain
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: blockproctor-pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local.dev
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5051:80"    
+
+volumes:
+  postgres_data:
+

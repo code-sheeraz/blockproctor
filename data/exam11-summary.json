@@ -1,0 +1,38 @@
+{
+    "success": true,
+    "summary": {
+        "exam": {
+            "id": 11,
+            "title": "Midterm - Data Structures",
+            "instructor_id": 12,
+            "duration_minutes": 60,
+            "starts_at": "2025-12-10T09:00:00.000Z",
+            "ends_at": "2025-12-10T11:00:00.000Z",
+            "total_questions": 2
+        },
+        "stats": {
+            "totalAttempts": 2,
+            "avgScore": 75,
+            "maxScore": 100,
+            "minScore": 50,
+            "passCount": 2,
+            "failCount": 0
+        },
+        "questions": [
+            {
+                "id": "q1",
+                "question": "What is a binary tree?",
+                "attemptCount": 2,
+                "correctCount": 2,
+                "correctPercent": 100
+            },
+            {
+                "id": "q2",
+                "question": "What is the average complexity of quicksort?",
+                "attemptCount": 2,
+                "correctCount": 1,
+                "correctPercent": 50
+            }
+        ]
+    }
+}
