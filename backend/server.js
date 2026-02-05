@@ -1,40 +1,37 @@
-// server.js
 import express from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
-
+import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import enrollRoutes from './routes/enrollRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 import examRoutes from './routes/examRoutes.js';
-import attemptRoutes from './routes/attemptRoutes.js';
-import instructorRoutes from './routes/instructorRoutes.js';
-import blockchainRoutes from "./routes/blockchainRoutes.js";
-
 
 dotenv.config();
 
 const app = express();
+app.use(cors());
+app.use(express.json({ limit: '10mb' })); // Increased limit for Base64 photos
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// simple logger (optional, but you were using something like this before)
-app.use((req, res, next) => {
-  const now = new Date().toISOString();
-  console.log(`${now} | ${req.method} ${req.url}`);
-  next();
-});
-
-app.get('/', (req, res) => {
-  res.send('BlockProctor backend is running');
-});
-
-// mount existing routes
+// Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api', examRoutes);
-app.use('/api', attemptRoutes);
-app.use('/api', instructorRoutes);
-app.use("/api/blockchain", blockchainRoutes);
+app.use('/api/enroll', enrollRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/exams', examRoutes);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`${new Date().toISOString()} | Server listening on ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
+});
+//HEALTH CHECK
+app.get('/', (req, res) => {
+    res.send(`
+      <h1>✅ BlockProctor Backend is Online!</h1>
+      <p>Try accessing these endpoints:</p>
+      <ul>
+        <li><a href="/api/exams">/api/exams</a> (List Exams)</li>
+        <li><a href="/api/users/6/face">/api/users/6/face</a> (Check User Face)</li>
+      </ul>
+    `);
 });

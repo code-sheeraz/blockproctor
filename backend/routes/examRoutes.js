@@ -1,84 +1,121 @@
-// routes/examRoutes.js
 import express from 'express';
-import { createExam, getExamById, getAllExams } from '../services/examService.js';
-import { getExamSummary } from '../services/attemptService.js';
+import { Pool } from 'pg';
+import dotenv from 'dotenv';
 
+dotenv.config();
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const router = express.Router();
 
-// CREATE exam
-router.post('/exams', async (req, res) => {
-  try {
-    const { title, instructor_id, duration_minutes, questions, starts_at, ends_at } = req.body;
+// 1. LIST EXAMS (With Score Check)
+router.get('/', async (req, res) => {
+    try {
+        const { studentId } = req.query;
 
-    if (!title || !instructor_id) {
-      return res.status(400).json({ success:false, message: 'title and instructor_id required' });
+        const query = `
+            SELECT e.*, 
+            (SELECT score FROM attempts a WHERE a.exam_id = e.id AND a.student_id = $1 LIMIT 1) as score,
+            (SELECT status FROM exam_sessions s WHERE s.exam_id = e.id AND s.student_id = $1 LIMIT 1) as status
+            FROM exams e
+            ORDER BY e.id ASC
+        `;
+        
+        const { rows } = await pool.query(query, [studentId || -1]);
+        
+        const exams = rows.map(exam => ({
+            ...exam,
+            is_completed: exam.status === 'COMPLETED' || exam.score != null,
+            score: exam.score 
+        }));
+
+        res.json({ success: true, exams });
+    } catch (err) {
+        console.error("List Exams Error:", err);
+        res.status(500).json({ error: err.message });
     }
-
-    console.log('POST /api/exams body:', req.body);
-    console.log('questions type:', typeof questions);
-
-    const exam = await createExam({
-      title,
-      instructor_id,
-      duration_minutes,
-      questions,
-      starts_at,
-      ends_at
-    });
-
-    res.json({ success: true, exam });
-  } catch (err) {
-    console.error('createExam error', err);
-    res.status(500).json({ success: false, error: err.message });
-  }
 });
 
-// LIST all exams
-router.get('/exams', async (req, res) => {
-  try {
-    const exams = await getAllExams();
-    res.json({ success: true, exams });
-  } catch (err) {
-    console.error('listExams error', err);
-    res.status(500).json({ success: false, error: err.message });
-  }
+// 2. GET SINGLE EXAM
+router.get('/:id', async (req, res) => {
+    try {
+        const { rows } = await pool.query('SELECT * FROM exams WHERE id = $1', [req.params.id]);
+        if (rows.length === 0) return res.status(404).json({ success: false });
+        res.json({ success: true, exam: rows[0] });
+    } catch (err) {
+        console.error("Get Exam Error:", err);
+        res.status(500).json({ error: err.message });
+    }
 });
 
-// GET single exam by id
-router.get('/exams/:examId', async (req, res) => {
-  try {
-    const examId = Number(req.params.examId);
-    if (!examId) {
-      return res.status(400).json({ success:false, message: 'Invalid examId' });
+// 3. SUBMIT EXAM (Transaction Safe)
+router.post('/submit', async (req, res) => {
+    let client; // <--- FIX: Declared outside try block
+    
+    try {
+        client = await pool.connect();
+        const { examId, studentId, answers } = req.body; 
+
+        // Start Transaction
+        await client.query('BEGIN');
+
+        // A. Calculate Score
+        const examResult = await client.query('SELECT questions_json FROM exams WHERE id = $1', [examId]);
+        if (examResult.rows.length === 0) throw new Error("Exam not found");
+
+        const questions = examResult.rows[0].questions_json || [];
+        let score = 0;
+        let correctCount = 0;
+
+        questions.forEach((q, index) => {
+            // Compare answers (Trimmed and Lowercase for safety)
+            const studentAns = String(answers[index] || "").trim().toLowerCase();
+            const correctAns = String(q.answer || q.correctAnswer || "").trim().toLowerCase();
+            
+            if (studentAns === correctAns) {
+                score += 10;
+                correctCount++;
+            }
+        });
+
+        // B. Update 'exam_sessions'
+        await client.query(
+            `INSERT INTO exam_sessions (exam_id, student_id, status, finished_at, result)
+             VALUES ($1, $2, 'COMPLETED', NOW(), $3)
+             ON CONFLICT (exam_id, student_id) 
+             DO UPDATE SET status = 'COMPLETED', finished_at = NOW(), result = $3`,
+            [examId, studentId, score.toString()]
+        );
+
+        // C. Update 'attempts'
+        const attemptResult = await client.query(
+            `INSERT INTO attempts 
+            (exam_id, student_id, answers_json, score, correct_count, total_questions, submitted_at)
+            VALUES ($1, $2, $3, $4, $5, $6, NOW())
+            ON CONFLICT (exam_id, student_id)
+            DO UPDATE SET 
+                answers_json = EXCLUDED.answers_json,
+                score = EXCLUDED.score,
+                correct_count = EXCLUDED.correct_count,
+                submitted_at = NOW()
+            RETURNING id`,
+            [examId, studentId, JSON.stringify(answers), score, correctCount, questions.length]
+        );
+
+        // Commit Transaction
+        await client.query('COMMIT');
+
+        res.json({ 
+            success: true, 
+            score, 
+            attemptId: attemptResult.rows[0].id 
+        });
+
+    } catch (err) {
+        if (client) await client.query('ROLLBACK'); // Only rollback if connected
+        console.error("Submission Transaction Error:", err);
+        res.status(500).json({ success: false, message: err.message });
+    } finally {
+        if (client) client.release(); // Only release if connected
     }
-
-    const exam = await getExamById(examId);
-    if (!exam) {
-      return res.status(404).json({ success:false, message: 'Exam not found' });
-    }
-
-    res.json({ success:true, exam });
-  } catch (err) {
-    console.error('getExamById error', err);
-    res.status(500).json({ success:false, error: err.message });
-  }
-});
-
-// 🔹 NEW: exam summary for instructor dashboard
-router.get('/exams/:examId/summary', async (req, res) => {
-  try {
-    const examId = Number(req.params.examId);
-    if (!examId) {
-      return res.status(400).json({ success:false, message: 'Invalid examId' });
-    }
-
-    const summary = await getExamSummary(examId);
-    res.json({ success:true, summary });
-
-  } catch (err) {
-    console.error('getExamSummary error', err);
-    res.status(500).json({ success:false, error: err.message });
-  }
 });
 
 export default router;
