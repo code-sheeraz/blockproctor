@@ -1,5 +1,5 @@
 {
-  "name": "blockproctor-blockchain",
+  "name": "blockchain",
   "version": "1.0.0",
   "description": "Solidity smart contracts for BlockProctor — tamper-evident exam audit trails on-chain",
   "type": "module",

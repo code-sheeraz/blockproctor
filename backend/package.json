@@ -1,5 +1,5 @@
 {
-  "name": "blockproctor-backend",
+  "name": "backend",
   "version": "1.0.0",
   "description": "Express.js REST API for BlockProctor — blockchain-anchored exam proctoring",
   "main": "server.js",

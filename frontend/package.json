@@ -1,5 +1,5 @@
 {
-  "name": "blockproctor-frontend",
+  "name": "vite-project",
   "private": true,
   "version": "1.0.0",
   "description": "React frontend for BlockProctor — AI-driven exam proctoring with blockchain audit trails",
