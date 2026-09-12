@@ -4,7 +4,7 @@
 
 **Blockchain-anchored, AI-driven exam proctoring with tamper-evident audit trails.**
 
-[![CI](https://github.com/your-org/blockproctor/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/blockproctor/actions/workflows/ci.yml)
+[![CI](https://github.com/code-sheeraz/blockproctor/actions/workflows/ci.yml/badge.svg)](https://github.com/code-sheeraz/blockproctor/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![Docker](https://img.shields.io/badge/docker-%3E%3D20-blue)](https://docker.com)

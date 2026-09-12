@@ -12,7 +12,7 @@ Thank you for your interest in contributing! This guide will help you get starte
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-org/blockproctor.git
+git clone https://github.com/code-sheeraz/blockproctor.git
 cd blockproctor
 
 # 2. Start backend + database + blockchain

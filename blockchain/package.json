@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/blockproctor"
+    "url": "https://github.com/code-sheeraz/blockproctor"
   },
   "engines": {
     "node": ">=18"
