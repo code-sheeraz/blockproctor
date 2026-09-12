@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+dist/
+build/
+.cache/
+
+# PostgreSQL data (lives in Docker volume or local pgdata/)
+pgdata/
+
+# Backups (contain DB dumps)
+backend/backups/
+
+# Blockchain (compiled contracts, cache, state)
+blockchain/artifacts/
+blockchain/cache/
+blockchain/typechain-types/
+blockchain/data/
+
+# Frontend MediaPipe assets (vendored at build time)
+frontend/public/mediapipe/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+
+# Data exports (may contain PII)
+blockproctor_*.json

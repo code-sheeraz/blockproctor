@@ -1,0 +1,33 @@
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.js]
+indent_size = 4
+
+[*.jsx]
+indent_size = 4
+
+[*.mjs]
+indent_size = 4
+
+[*.sol]
+indent_size = 4
+
+[*.json]
+indent_size = 2
+
+[*.yml]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.sql]
+indent_size = 4

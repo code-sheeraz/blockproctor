@@ -1,0 +1,9 @@
+{
+  "_comment": "TEMPLATE — copy this file per test scenario (thesis Table 4.1) and fill in the annotated timelines. `timestamp` accepts epoch ms, ISO datetime, or exam-clock HH:MM:SS strings measured from session start. `detected` is the proctor_logs timeline for that session (export via GET /api/research/export/violations or /full-export). Run: node scripts/evaluate_detection.mjs data/ground-truth/<file>.json",
+  "scenario": "Scenario 1 - Normal examination behavior (REPLACE ME)",
+  "durationMinutes": 20,
+  "toleranceMs": 3000,
+  "negativeWindows": 36000,
+  "groundTruth": [],
+  "detected": []
+}

@@ -1,7 +1,10 @@
 @echo off
-REM Run migration script in Docker PostgreSQL container (Windows)
-
-docker exec -i blockproctor-db psql -U postgres -d blockproctor < backend\migrations\001_add_enrollment_workflow.sql
-
-echo Migration completed!
+REM Run all database migrations via the migration runner
+docker exec -i blockproctor-backend node migrate.js
+if %errorlevel% neq 0 (
+    echo Migration failed! Check the error above.
+    pause
+    exit /b 1
+)
+echo All migrations completed successfully!
 pause

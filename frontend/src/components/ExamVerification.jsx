@@ -4,6 +4,10 @@ import * as faceapi from 'face-api.js';
 import { FaceMesh } from '@mediapipe/face_mesh';
 import { loadModels } from '../faceUtils';
 
+import { getApiBase } from '../utils/apiBase.js';
+
+const API_BASE = getApiBase();
+
 // OPTIMIZATION: TinyFace for Speed (15-20 FPS)
 const tinyFaceOptions = new faceapi.TinyFaceDetectorOptions({
     inputSize: 224, // Smaller = Faster
@@ -28,22 +32,24 @@ const ExamVerification = () => {
     const failCounter = useRef(0);
     const faceMeshRef = useRef(null);
     const faceMeshInitializedRef = useRef(false);
+    const streamRef = useRef(null);
+    const activeRef = useRef(true);
 
     // TUNING: "Red Warning ASAP" Settings
     const FAIL_THRESHOLD = 5;       // Only 5 bad frames (~0.5s) to trigger RED ALERT
     const DISTANCE_LIMIT = 0.55;    // Strictness (0.6 is standard, 0.55 is strict)
 
-    useEffect(() => {
-        const init = async () => {
-            const loaded = await loadModels();
-            if (loaded) {
-                await fetchEnrolledFace();
-            } else {
-                setStatus("System Error: AI Models Failed");
-            }
-        };
-        init();
-    }, []);
+    const startVideo = () => {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                streamRef.current = stream;
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                    videoRef.current.onloadedmetadata = () => videoRef.current.play();
+                }
+            })
+            .catch(() => setStatus("Camera Permission Denied"));
+    };
 
     // 1. Check Enrollment Status & Fetch Face Descriptor
     const fetchEnrolledFace = async () => {
@@ -51,7 +57,7 @@ const ExamVerification = () => {
             setStatus("Checking Enrollment Status...");
             
             // First check enrollment status
-            const statusRes = await fetch(`http://localhost:8080/api/users/${userId}/enrollment-status`);
+            const statusRes = await fetch(`${API_BASE}/users/${userId}/enrollment-status`);
             const statusData = await statusRes.json();
             
             if (!statusData.success || statusData.enrollment_status !== 'APPROVED') {
@@ -72,7 +78,7 @@ const ExamVerification = () => {
 
             // Enrollment approved - fetch face descriptor
             setStatus("Loading Face ID...");
-            const res = await fetch(`http://localhost:8080/api/users/${userId}/face`);
+            const res = await fetch(`${API_BASE}/users/${userId}/face`);
             
             if (res.status === 404) {
                 alert("Face descriptor not found. Please re-enroll.");
@@ -93,16 +99,17 @@ const ExamVerification = () => {
         }
     };
 
-    const startVideo = () => {
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                if (videoRef.current) {
-                    videoRef.current.srcObject = stream;
-                    videoRef.current.onloadedmetadata = () => videoRef.current.play();
-                }
-            })
-            .catch(() => setStatus("Camera Permission Denied"));
-    };
+    useEffect(() => {
+        const init = async () => {
+            const loaded = await loadModels();
+            if (loaded) {
+                await fetchEnrolledFace();
+            } else {
+                setStatus("System Error: AI Models Failed");
+            }
+        };
+        init();
+    }, []);
 
     // 2. MediaPipe Logic (Head Pose)
     const initFaceMesh = () => {
@@ -120,10 +127,11 @@ const ExamVerification = () => {
         faceMeshInitializedRef.current = true;
         
         const loop = async () => {
+            if (!activeRef.current) return;
             if (videoRef.current && !videoRef.current.paused) {
                 await faceMesh.send({ image: videoRef.current });
             }
-            requestAnimationFrame(loop);
+            if (activeRef.current) requestAnimationFrame(loop);
         };
         loop();
     };
@@ -148,8 +156,9 @@ const ExamVerification = () => {
 
     // 3. The Main Security Loop
     const detectFrame = async () => {
+        if (!activeRef.current) return;
         if (!videoRef.current || videoRef.current.paused) {
-            requestAnimationFrame(detectFrame);
+            if (activeRef.current) requestAnimationFrame(detectFrame);
             return;
         }
 
@@ -197,6 +206,21 @@ const ExamVerification = () => {
 
         requestAnimationFrame(detectFrame);
     };
+
+    // Stop webcam and FaceMesh on unmount
+    useEffect(() => {
+        return () => {
+            activeRef.current = false;
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(t => t.stop());
+                streamRef.current = null;
+            }
+            if (faceMeshRef.current) {
+                faceMeshRef.current.close();
+                faceMeshRef.current = null;
+            }
+        };
+    }, []);
 
     return (
         <div className={`min-h-screen ${bgColor} text-white flex flex-col items-center justify-center p-5 transition-colors duration-300`}>

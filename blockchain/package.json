@@ -1,15 +1,19 @@
 {
-  "name": "blockchain",
+  "name": "blockproctor-blockchain",
   "version": "1.0.0",
+  "description": "Solidity smart contracts for BlockProctor — tamper-evident exam audit trails on-chain",
   "type": "module",
-  "description": "",
-  "main": "index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/blockproctor"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.1.0",
     "@nomicfoundation/hardhat-ethers": "^3.1.0",

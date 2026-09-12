@@ -1,0 +1,42 @@
+{
+  "_comment": "Field validation - session-class evaluation across seven August 2026 runs. Binary performed-vs-detected decision per class per session; robust to memory-based annotation times. Sessions s1-s3: behavioural/anti-cheat scenarios. Sessions s4-s7: dedicated impersonation trials (a substitute sat in place of the enrolled student after a verified baseline; full-exit swap under 3s) - each trial contributes an IMPERSONATION-only decision by design scope; incidental HEAD_TURN/TAB flags during substitution settling (two fired before the swap completed, i.e. the enrolled student exiting) and the post-lock TAB_SWITCH are excluded from scoring and discussed qualitatively. Class mapping: TAB_HIDDEN merged into TAB_AWAY with TAB_SWITCH. Exclusions from scoring: ADMIN_UNLOCK rows, BLOCKED rows (lock outcome), 'verifying 1/3 & 2/3' pre-threshold moments, ABSENCE_MINOR kept as a deliberate false negative (performed >3s look-away, undetected). Impersonation ground truth corroborated by proctor_logs IMPERSONATION descriptions carrying face distances 0.59-0.66 vs the 0.55 threshold; time-to-lock 27.5s / 28.7s / 33.6s / 34.1s.",
+  "scenario": "BlockProctor field validation - 7 sessions x violation classes",
+  "mode": "session-classes",
+  "sessions": [
+    {
+      "sessionId": "s1-shortcuts (Mid shortcuts etc violations)",
+      "groundTruthClasses": ["TAB_AWAY", "KEYBOARD_SHORTCUT", "RIGHT_CLICK"],
+      "detectedClasses": ["TAB_AWAY", "KEYBOARD_SHORTCUT", "RIGHT_CLICK"]
+    },
+    {
+      "sessionId": "s2-mixed (Mid Copy behavioural violations)",
+      "groundTruthClasses": ["HEAD_TURN_RIGHT", "HEAD_TURN_LEFT", "HEAD_TURN_UP", "TAB_AWAY", "ABSENCE_MINOR", "MULTI_FACE"],
+      "detectedClasses": ["HEAD_TURN_RIGHT", "HEAD_TURN_LEFT", "HEAD_TURN_UP", "TAB_AWAY", "MULTI_FACE"]
+    },
+    {
+      "sessionId": "s3-normal (Mid Normal + deliberate final up-look and right glances)",
+      "groundTruthClasses": ["HEAD_TURN_UP", "HEAD_TURN_RIGHT"],
+      "detectedClasses": ["HEAD_TURN_RIGHT", "HEAD_TURN_UP"]
+    },
+    {
+      "sessionId": "s4-impersonation (Mid Impersonation 2, dist 0.64/0.60/0.59)",
+      "groundTruthClasses": ["IMPERSONATION"],
+      "detectedClasses": ["IMPERSONATION"]
+    },
+    {
+      "sessionId": "s5-impersonation (Mid Impersonation 3, dist 0.65/0.62/0.66)",
+      "groundTruthClasses": ["IMPERSONATION"],
+      "detectedClasses": ["IMPERSONATION"]
+    },
+    {
+      "sessionId": "s6-impersonation (Mid Impersonation 4, dist 0.60/0.61/0.62)",
+      "groundTruthClasses": ["IMPERSONATION"],
+      "detectedClasses": ["IMPERSONATION"]
+    },
+    {
+      "sessionId": "s7-impersonation (Mid Impersonation 5, dist 0.61/0.59/0.60)",
+      "groundTruthClasses": ["IMPERSONATION"],
+      "detectedClasses": ["IMPERSONATION"]
+    }
+  ]
+}

@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+@layer base {
+  /* Pointer + pressed-state feedback for every button app-wide */
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+  button:not(:disabled):active {
+    transform: scale(0.98);
+    filter: brightness(0.96);
+  }
+}

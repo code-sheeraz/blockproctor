@@ -1,0 +1,27 @@
+{
+  "_comment": "Scenario 1 - Shortcuts & tab switches (session #1, exam 'Mid shortcuts etc violations'). Event-level evaluation; timestamps are offsets from session start derived from proctor_logs.created_at - started_at (timezone-safe). Ground truth is database-corroborated: the 18:23:57 wall-clock event the annotator remembered as a keyboard shortcut was actually the third tab blur (TAB_SWITCH count:3), and right-clicks occurred only in the final burst. Consecutive same-type detections within 1s are treated as one physical event (the TAB_SWITCH+TAB_HIDDEN pair at 124.1/124.2). TAB_HIDDEN is merged into TAB_AWAY with TAB_SWITCH.",
+  "scenario": "Scenario 1 - Tab switches, copy/paste shortcuts & right-clicks",
+  "toleranceMs": 3000,
+  "groundTruth": [
+    { "type": "TAB_AWAY",          "timestamp": "00:00:43" },
+    { "type": "TAB_AWAY",          "timestamp": "00:00:59" },
+    { "type": "TAB_AWAY",          "timestamp": "00:01:19" },
+    { "type": "KEYBOARD_SHORTCUT", "timestamp": "00:01:28" },
+    { "type": "KEYBOARD_SHORTCUT", "timestamp": "00:01:32" },
+    { "type": "TAB_AWAY",          "timestamp": "00:02:04" },
+    { "type": "RIGHT_CLICK",       "timestamp": "00:02:12" },
+    { "type": "RIGHT_CLICK",       "timestamp": "00:02:12" },
+    { "type": "RIGHT_CLICK",       "timestamp": "00:02:13" }
+  ],
+  "detected": [
+    { "type": "TAB_AWAY",          "timestamp": "00:00:43" },
+    { "type": "TAB_AWAY",          "timestamp": "00:00:59" },
+    { "type": "TAB_AWAY",          "timestamp": "00:01:19" },
+    { "type": "KEYBOARD_SHORTCUT", "timestamp": "00:01:28" },
+    { "type": "KEYBOARD_SHORTCUT", "timestamp": "00:01:32" },
+    { "type": "TAB_AWAY",          "timestamp": "00:02:04" },
+    { "type": "RIGHT_CLICK",       "timestamp": "00:02:12" },
+    { "type": "RIGHT_CLICK",       "timestamp": "00:02:12" },
+    { "type": "RIGHT_CLICK",       "timestamp": "00:02:13" }
+  ]
+}
