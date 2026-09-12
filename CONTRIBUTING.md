@@ -6,7 +6,7 @@ Thank you for your interest in contributing! This guide will help you get starte
 
 ### Prerequisites
 - **Docker** (Compose v2) — runs PostgreSQL, Anvil blockchain, and the backend
-- **Node.js 18+** — needed for frontend dev and tests
+- **Node.js 20+** — needed for frontend dev and tests
 
 ### Getting Started
 

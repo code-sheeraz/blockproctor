@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/code-sheeraz/blockproctor/actions/workflows/ci.yml/badge.svg)](https://github.com/code-sheeraz/blockproctor/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 [![Docker](https://img.shields.io/badge/docker-%3E%3D20-blue)](https://docker.com)
 
 A full-stack system that combines **real-time AI proctoring** (head-pose estimation, identity verification, multi-face detection, absence monitoring) with **on-chain anchoring** of exam hashes, attempt data, and proctor logs — ensuring every exam session is verifiably tamper-proof.
@@ -58,7 +58,7 @@ A full-stack system that combines **real-time AI proctoring** (head-pose estimat
 ### Prerequisites
 
 - **Docker** (Compose v2) — runs PostgreSQL, Anvil blockchain, backend, and pgAdmin
-- **Node.js 18+** — only needed for frontend development and running tests
+- **Node.js 20+** — only needed for frontend development and running tests
 
 ### 1. Start the full stack
 

@@ -10,7 +10,7 @@
     "url": "https://github.com/code-sheeraz/blockproctor"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "test": "vitest run",

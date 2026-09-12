@@ -1,5 +1,5 @@
 # Use Node 18 LTS
-FROM node:18
+FROM node:20
 
 # Install Foundry (provides the `anvil` node). Pinned release + retries because
 # GitHub release downloads can be flaky over HTTP/2.
